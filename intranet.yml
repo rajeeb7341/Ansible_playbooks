@@ -1,0 +1,47 @@
+---
+ - hosts: all
+   become: true
+   tasks:
+    - name: Add multiple repositories into the same file (1/2)
+      yum_repository:
+       name: epel
+       description: EPEL YUM repo
+       file: external_repos
+       baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+       gpgcheck: no
+
+    - name: ensure latest versions of httpd and firewalld are installed
+      yum:
+       name: "{{ packages }}"
+       state: latest
+      vars:
+       packages:
+        - httpd
+        - firewalld
+
+    - name: Make sure firewalld is enabled and started
+      systemd:
+        state: started
+        enabled: yes
+        name: firewalld
+
+    - firewalld:
+        service: https
+        permanent: yes
+        state: enabled
+
+    - name: Make sure httpd is enabled and started
+      systemd:
+        state: started
+        enabled: yes
+        name: httpd
+    
+    - name: Ensure line is present in file
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: '^Welcome'
+        line: 'Welcome to Adhoc Networks'
+ 
+        
+    
+
