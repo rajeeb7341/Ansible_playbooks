@@ -1,0 +1,10 @@
+---
+ - hosts: all
+   become: true
+   tasks:
+    - name: Ensure marriadb is running or enabled
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+
