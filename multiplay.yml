@@ -1,0 +1,25 @@
+---
+ - hosts: all
+   become: true
+   vars:
+    - passwd: $1$QJKTT0Zr$PYCbkMOrndurogoQ7bVad/
+
+   tasks:
+    - name: install the latest version of mariadb
+      yum:
+       name: mariadb
+       state: latest
+    
+    - name: Ensuring root password is redhat
+      user:
+        name: root
+        update_password: always
+        password: "{{passwd}}"
+
+    - name: Manage firewall for mariadb
+      firewalld:
+        service: mysql
+        permanent: yes
+        immediate: yes
+        state: enabled
+ 
